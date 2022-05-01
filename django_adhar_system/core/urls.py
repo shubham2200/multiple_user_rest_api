@@ -10,6 +10,10 @@ urlpatterns = [
     path('ManagerDashboard/',OnlyManagerView.as_view() , name='ManagerDashboard'),
     path('StaffDashboard/',OnlyStaffView.as_view() , name='StaffDashboard'),
     path('CreateReadManager/',CreateReadManager.as_view() , name='CreateReadManager'),
+    path('CreateReadManagerDetails/<int:pk>/',CreateReadManagerDetails.as_view() , name='CreateReadManagerDetails'),
+    path('StaffOnlySee/',StaffOnlySee.as_view() , name='StaffOnlySee'),
+
+
 
 
     

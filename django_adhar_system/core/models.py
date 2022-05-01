@@ -54,12 +54,9 @@ class Address(models.Model):
 class Qalification(models.Model):
     aadhar = models.ForeignKey(Aadhar , on_delete=models.CASCADE , related_name='qalification')
     name_collage_school = models.CharField(max_length=15 , null=True , blank=True)
-    Year_passing = models.DateField(
-
-    )
+    Year_passing = models.DateField()
     percentage = models.FloatField()
-    def __str__(self):
-        return self.name_collage_school
+   
 
 
 class Bank(models.Model):
@@ -67,8 +64,7 @@ class Bank(models.Model):
     account_number = models.CharField(max_length=16 , blank=True,null=True )
     bank_name = models.CharField(max_length=16 , blank=True,null=True )
     ifcs = models.CharField(max_length=6 , unique=True,blank=True,null=True )
-    def __str__(self):
-        return self.account_number
+   
     
 
 class PersonalDetails(models.Model):
@@ -88,15 +84,13 @@ class PersonalDetails(models.Model):
     bloodgroup = models.CharField(max_length=3 , choices=CHOICES)
     contact_number =  PhoneNumberField(unique=True ,blank=True, null=True )
     email = models.EmailField()
-    def __str__(self):
-        return self.fullname
+   
 
 class PastJobExperience(models.Model):
     aadhar = models.ForeignKey(Aadhar , on_delete=models.CASCADE , related_name='PastJobExperience')
     company_name = models.CharField(max_length=19 , blank=True , null=True)
     job_role =  models.CharField(max_length=19 , blank=True , null=True)
     year_of_work_experience = models.CharField(max_length=19 , blank=True , null=True)
-    def __str__(self):
-        return self.company_name
+   
 
 

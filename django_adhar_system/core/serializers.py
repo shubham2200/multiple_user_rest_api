@@ -91,6 +91,57 @@ class AdharSerializer(serializers.ModelSerializer):
         Addres = Address.objects.create(**validated_data)
     
         for track_data in aadhar_data:
-            Aadhar.objects.create(Addres = Addres, **track_data)
-        return Address
+            Aadhar.objects.create(aadhar_number = Addres, **track_data)
+        return Addres
+
+
+class BankSerializer(serializers.ModelSerializer):
+    
+    class Meta:
+        model = Bank
+        fields = '__all__'
+
+
+
+class AdharSerializer(serializers.ModelSerializer):
+    Bank_account = BankSerializer( many=True, read_only=True)
+
+    class Meta:
+        model = Aadhar
+        fields = ['aadhar_number','is_active']
+
+
+    def create(self, validated_data):
+        aadhar_data = validated_data.pop('Bank_account')
+        Bank_f = Qalification.objects.create(**validated_data)
+    
+        for track_data in aadhar_data:
+            Aadhar.objects.create(aadhar_number = Bank_f, **track_data)
+        return Bank_f
+
+
+class PersonalDetailsSerializer(serializers.ModelSerializer):
+    
+    class Meta:
+        model = PersonalDetails
+        fields = '__all__'
+
+
+
+class AdharSerializer(serializers.ModelSerializer):
+    PersonalDetails_f = PersonalDetailsSerializer( many=True, read_only=True)
+
+    class Meta:
+        model = Aadhar
+        fields = ['aadhar_number','is_active']
+
+
+    def create(self, validated_data):
+        aadhar_data = validated_data.pop('PersonalDetails_f')
+        PersonalDetails_a = PersonalDetails.objects.create(**validated_data)
+    
+        for track_data in aadhar_data:
+            Aadhar.objects.create(aadhar_number = PersonalDetails_a, **track_data)
+        return PersonalDetails_a
+
 

@@ -1,9 +1,4 @@
-# from multiprocessing import context
-# from django.shortcuts import render
 from django.http import JsonResponse
-# from rest_framework import status
-# from requests import delete, post
-# from yaml import serialize
 from rest_framework import generics ,status
 from .serializers import *
 from rest_framework.authtoken.models import Token
@@ -64,6 +59,7 @@ class CostumAuth(ObtainAuthToken):
 
 
 class LogoutView(APIView):
+    permission_classes = [IsAuthenticated&IsManagerUser]
     def post(self, request, format=None):
         request.auth.delete()
         return JsonResponse({"status":"user has been logout"})
@@ -96,13 +92,73 @@ class OnlyStaffView(APIView):
 
 class CreateReadManager(APIView):
     permission_classes = [IsAuthenticated&IsManagerUser]
-    adhar_seri = AdharSerializer
+    # adhar_seri = AdharSerializer
     addres_seri = AddressSerializer
+    qouli = BankSerializer
+    persnol = PersonalDetailsSerializer
+
     def post(self, request, *args, **kwargs):
         # adhar = self.adhar_seri(data = request.data)
         addres = self.addres_seri(data = request.data)
+        Bank_f = self.qouli(data = request.data)
+        detail = self.persnol(data = request.data)
+        print(addres,Bank_f,detail)
         if addres.is_valid(raise_exception=True):
             addres.save()
-            
-        return JsonResponse({'hello':addres.data})
+            if Bank_f.is_valid():
+                Bank_f.save()
+                if detail.is_valid():
+                    detail.save()
+
+
+                return JsonResponse({
+                        'addresss':addres.data,
+                        'Bank':Bank_f.data,
+                        'pernoal':detail.data
+                        })
+    def get(self, request, *args, **kwargs):
+        addr = AddressSerializer(Address.objects.all() , many=True)
+        bank = BankSerializer(Bank.objects.all() , many=True)
+        return JsonResponse({
+            'addree':addr.data,
+            'bank':bank.data
+        })
     
+class CreateReadManagerDetails(APIView):
+    permission_classes = [IsAuthenticated&IsManagerUser]
+    def  get(self, request, pk):
+        id = Address.objects.get(pk=pk)
+        data = AddressSerializer(id)
+        return JsonResponse({"data":data.data})
+
+
+
+
+    def put(self, request, pk):
+        ad_id = Address.objects.get(pk=pk)
+        
+        print(ad_id,'id')
+        addr = AddressSerializer(instance=ad_id , data= request.data)
+        print(addr)
+        if addr.is_valid():
+            addr.save()
+            return JsonResponse({'data':addr.data,'adhar':'done'})
+        else:
+            return JsonResponse({'data':'not'})
+
+    def delete(self, request, pk):
+        id = Address.objects.get(pk=pk)
+        id.delete()
+
+        return JsonResponse({'delete':'done'})
+
+class StaffOnlySee(APIView):
+    permission_classes = [IsAuthenticated&IsStaffUser]
+    def get(self, request, *args, **kwargs):
+        addr = AddressSerializer(Address.objects.all() , many=True)
+        bank = BankSerializer(Bank.objects.all() , many=True)
+        return JsonResponse({
+            'addree':addr.data,
+            'bank':bank.data
+        })
+        
